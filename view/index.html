@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Cuaca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gradient-to-r from-sky-400 to-teal-600 flex justify-center items-center h-screen"
+  >
+    <div class="bg-teal-400 shadow-lg rounded-lg p-6 w-96">
+      <h1 class="text-xl font-bold text-center text-gray-700 flex items-center">
+        Chatbot Prediksi Cuaca <br />
+        jangan Lupa say "Halo" untuk memulai
+        <picture>
+          <source
+            srcset="
+              https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.webp
+            "
+            type="image/webp"
+          />
+          <img
+            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.gif"
+            alt="😁"
+            width="32"
+            height="32"
+          />
+        </picture>
+      </h1>
+      <div
+        id="info-box"
+        class="border p-3 mt-3 bg-gray-50 rounded text-gray-700"
+      >
+        <p><strong>Info Parameter Cuaca:</strong></p>
+        <ul class="list-disc pl-5">
+          <li>
+            Angin: [0 = Tenang, 1 = Sedang, 2 = Kencang, 3 = Sangat Kencang]
+          </li>
+          <li>Kelembapan: [0 = Kering, 1 = Lembab, 2 = Sangat Lembab]</li>
+          <li>Badai: [0 = Tidak, 1 = Ya]</li>
+          <li>Perubahan: [0 = Tidak, 1 = Ya]</li>
+        </ul>
+        <p class="p-2 bg-sky-300 rounded-lg mt-2 text-center">
+          <strong>Contoh Input: 0 0 0 0</strong>
+        </p>
+      </div>
+      <div
+        id="chat-box"
+        class="border p-3 h-64 overflow-y-auto mt-3 bg-gray-50 rounded"
+      ></div>
+
+      <div class="flex mt-3">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Ketik pesan..."
+          class="flex-grow p-2 border rounded-l focus:outline-none"
+        />
+        <button
+          onclick="sendMessage()"
+          class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
+        >
+          Kirim
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function sendMessage() {
+        let input = document.getElementById("user-input");
+        let message = input.value.trim();
+        if (message === "") return;
+
+        let chatBox = document.getElementById("chat-box");
+        chatBox.innerHTML += `<p class="text-blue-600 font-bold">Anda: ${message}</p>`;
+
+        fetch("/chat", {
+          method: "POST",
+          body: JSON.stringify({ message: message }),
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            chatBox.innerHTML += `<p class="text-gray-700 font-semibold">Bot: ${data.reply}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+          });
+
+        input.value = "";
+      }
+
+      document
+        .getElementById("user-input")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") sendMessage();
+        });
+    </script>
+  </body>
+</html>

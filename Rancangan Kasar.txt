@@ -1,0 +1,62 @@
+Rule / Pertanyaan : 
+- Bagaimana Kondisi Langit Hari ini? [ Cerah, Berawan, Mendung, Hujan Ringan, Hujan Lebat ]
+- Seberapa Kuat Angin Bertiup Di Sekitar Anda? [ Tenang, Sedang, Kencang, Sangat Kencang ]
+- Bagaimana Perkiraan Kelembapan Udara Di Sekitar Anda? [ Kering, Lembab, Sangat Lembab ]
+- Apakah Ada Tanda-tanda Badai Di sekitar Anda? [ Ya, Tidak ]
+- Apakah Ada perubahan Cuaca Yang Signifikan Dalam Beberapa Jam Terakhir? [ Ya, Tidak ]
+angin [0 = Tenang, 1 = Sedang, 2 = Kencang, 3 = Sangat Kencang], kelembapan [0 = Kering, 1 = Lembab, 2 = Sangat Lembab], badai [0 = Tidak, 1 = Ya], perubahan [0 = Tidak, 1 = Ya].
+
+Parameter :
+	SUHU : 
+		Dingin : 10 - 20 derajat
+		Sejuk : 21 - 25 derajat
+		Hangat : 26 - 30 derajat
+		Panas : 31 -35 derajat
+		Sangat Panas : 36 - 30 derajat
+
+	KELEMBAPAN UDARA :
+		Kering : 0% - 30%
+		lembap : 31% - 60%
+		Sangat lembap : 61% - 100%
+
+	KECEPATAN ANGIN :
+		Tenang : 0 - 5 KM/J
+		Sedang : 6 - 20 KM/J
+		Kencang : 21 - 40KM/J
+		Sangat Cepat : > 40KM/J
+
+	KONDISI LANGIT : 
+		Cerah : 0% tertutup awan
+		Berawan : 1 - 50% tertutup awan
+		mendung : 51 - 99% tertutup awan 
+		Hujan Ringan : 1 - 5 mm/Jam
+		Hujan Lebat : > 5 mm/Jam
+
+	TANDA BADAI : 
+		Ya : 1
+		Tidak : 0
+	
+	PERUBAHAN SIGNIFIKAN : 
+		Ya : 1
+		Tidak : 0
+
+
+pengelompokan : 
+0 0 0 0 = Cerah 
+0 0 0 1 
+0 0 1 0 
+0 0 1 1
+0 1 0 0
+0 1 0 1
+0 1 1 0
+0 1 1 1
+1 0 0 0 = Berawan
+1 0 0 1
+1 0 1 0
+1 0 1 1
+1 1 0 0 = Mendung
+1 1 0 1 
+1 1 1 0 
+1 1 1 1
+2 1 0 1 = Hujan Ringan
+3 2 1 1 = Hujan Lebat
