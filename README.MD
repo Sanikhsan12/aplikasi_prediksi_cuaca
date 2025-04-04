@@ -1,3 +1,5 @@
+![Image](https://github.com/user-attachments/assets/7199785b-4032-4e3c-8681-05141ae953af)
+
 # Aplikasi Sistem Pakar Bertema Prediksi Cuaca
 
 ## Fitur
@@ -15,5 +17,3 @@
 - Muhammad Yazid
 - Ahmad Faoyan
 - Muhammad Ikhsan
-
-![Image](https://github.com/user-attachments/assets/7199785b-4032-4e3c-8681-05141ae953af)
