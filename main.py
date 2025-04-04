@@ -69,15 +69,26 @@ def hitung_fuzzy(angin, kelembapan, badai, perubahan):
 
     # ? Pemetaan hasil ke kategori cuaca
     if hasil < 1:
-        return "Cerah"
+        hasil = "Cerah"
     elif hasil < 2:
-        return "Berawan"
+        hasil = "Berawan"
     elif hasil < 3:
-        return "Mendung"
+        hasil = "Mendung"
     elif hasil < 4:
-        return "Hujan Ringan"
+        hasil = "Hujan Ringan"
     else:
-        return "Hujan Lebat"
+        hasil = "Hujan Lebat"
+
+    # * Saran Hasil prediksi
+    saran = {
+        "Cerah": "Disarankan untuk menggunakan krim sunblock karena kemungkinan cahaya matahari akan terik hari ini.",
+        "Berawan": "Cuaca cukup nyaman, tetapi tetap siapkan payung kecil jika diperlukan.",
+        "Mendung": "Disarankan membawa payung karena kemungkinan hujan ringan.",
+        "Hujan Ringan": "Gunakan jas hujan atau payung untuk berjaga-jaga.",
+        "Hujan Lebat": "Hindari bepergian jika tidak mendesak dan pastikan perlengkapan hujan tersedia.",
+    }
+
+    return hasil, saran.get(hasil, "Tidak ada saran untuk cuaca ini.")
 
 @app.route('/')
 def index():
@@ -89,8 +100,6 @@ def chat():
         data = request.json['message'].strip().lower()
         responses = {
             "halo": "<br/>Halo! Masukkan parameter cuaca dalam format: angin (0-3), kelembapan (0-2), badai (0-1), perubahan (0-1).",
-            "siapa kamu": "Saya chatbot prediksi cuaca menggunakan fuzzy logic.",
-            "apa kabar": "Saya baik! Bagaimana dengan Anda?"
         }
         
         if data in responses:
@@ -102,8 +111,8 @@ def chat():
             if len(params) == 4:
                 angin, kelembapan, badai, perubahan = params
                 if 0 <= angin <= 3 and 0 <= kelembapan <= 2 and 0 <= badai <= 1 and 0 <= perubahan <= 1:
-                    hasil = hitung_fuzzy(angin, kelembapan, badai, perubahan)
-                    return jsonify({"reply": f"Prediksi cuaca: {hasil}"})
+                    hasil, saran = hitung_fuzzy(angin, kelembapan, badai, perubahan)
+                    return jsonify({"reply": f"Prediksi cuaca dalam beberapa jam kedepan akan {hasil}. {saran}"})
                 else:
                     return jsonify({"reply": "Format salah! Gunakan angka sesuai rentang yang ditentukan."})
             else:
