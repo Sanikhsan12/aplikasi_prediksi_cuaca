@@ -13,7 +13,7 @@
 
 ## Kelompok F6
 
-- Hafiz Faqih Maulana
+- Hafiz Faqih
 - Muhammad Yazid
 - Ahmad Faoyan
 - Muhammad Ikhsan
