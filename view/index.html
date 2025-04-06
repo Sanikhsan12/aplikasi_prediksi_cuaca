@@ -7,96 +7,115 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body
-    class="bg-gradient-to-r from-sky-400 to-teal-600 flex justify-center items-center h-screen"
+    class="bg-gradient-to-r from-sky-400 to-teal-600 flex flex-col items-center h-screen"
   >
-    <div class="bg-teal-400 shadow-lg rounded-lg p-6 w-96">
-      <h1 class="text-xl font-bold text-center text-gray-700 flex items-center">
-        Aplikasi Chatbot Cuaca <br />
+    <h1 class="text-2xl font-bold mb-8">PREDIKSI CUACA</h1>
 
-        Jangan Lupa say "Halo" untuk memulai
-        <picture>
-          <source
-            srcset="
-              https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.webp
-            "
-            type="image/webp"
+    <!-- Menu Input -->
+    <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Menu Input</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block font-medium">Suhu Udara</label>
+          <input
+            type="text"
+            value="27.8"
+            class="w-full border border-gray-300 rounded px-3 py-2"
           />
-          <img
-            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f601/512.gif"
-            alt="😁"
-            width="32"
-            height="32"
+        </div>
+        <div>
+          <label class="block font-medium">Kelembaban Udara</label>
+          <input
+            type="text"
+            value="83"
+            class="w-full border border-gray-300 rounded px-3 py-2"
           />
-        </picture>
-      </h1>
-      <div
-        id="info-box"
-        class="border p-3 mt-3 bg-gray-50 rounded text-gray-700"
-      >
-        <p><strong>Info Parameter Cuaca:</strong></p>
-        <ul class="list-disc pl-3 text-justify">
-          <li>
-            Angin: [0 = Tenang, 1 = Sedang, 2 = Kencang, 3 = Sangat Kencang]
-          </li>
-          <li>Kelembapan: [0 = Kering, 1 = Lembab, 2 = Sangat Lembab]</li>
-          <li>Tanda Akan Ada Badai: [0 = Tidak, 1 = Ya]</li>
-          <li>
-            Perubahan Cuaca Signifikan Dalam Waktu Dekat: [0 = Tidak, 1 = Ya]
-          </li>
-        </ul>
-        <p class="p-2 bg-sky-300 rounded-lg mt-2 text-center">
-          <strong>Contoh Format Input: 0 0 0 0</strong>
-        </p>
+        </div>
+        <div>
+          <label class="block font-medium">Tekanan Udara</label>
+          <input
+            type="text"
+            value="1009.9"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+          />
+        </div>
       </div>
-      <div
-        id="chat-box"
-        class="border p-3 h-64 overflow-y-auto mt-3 bg-gray-50 rounded"
-      ></div>
+    </section>
 
-      <div class="flex mt-3">
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Ketik pesan..."
-          class="flex-grow p-2 border rounded-l focus:outline-none"
-        />
-        <button
-          onclick="sendMessage()"
-          class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
-        >
-          Kirim
-        </button>
-      </div>
+    <!-- Output Container -->
+    <div class="w-full max-w-3xl flex flex-col md:flex-row gap-6 mb-6">
+      <!-- Output Sugeno -->
+      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Menu Output Sugeno</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium">Curah Hujan</label>
+            <input
+              type="text"
+              value="2"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              readonly
+            />
+          </div>
+          <div>
+            <label class="block font-medium">Prediksi Cuaca</label>
+            <input
+              type="text"
+              value="Hujan Ringan"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              readonly
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Output Mamdani -->
+      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Menu Output Mamdani</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium">Curah Hujan</label>
+            <input
+              type="text"
+              value="7.90664"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              readonly
+            />
+          </div>
+          <div>
+            <label class="block font-medium">Prediksi Cuaca</label>
+            <input
+              type="text"
+              value="Hujan Ringan"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              readonly
+            />
+          </div>
+        </div>
+      </section>
     </div>
 
-    <script>
-      function sendMessage() {
-        let input = document.getElementById("user-input");
-        let message = input.value.trim();
-        if (message === "") return;
+    <!-- Menu Saran -->
+    <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Menu Saran</h2>
+      <p class="text-gray-700">
+        Disarankan membawa payung jika hendak bepergian karena diprediksi hujan
+        ringan.
+      </p>
+    </section>
 
-        let chatBox = document.getElementById("chat-box");
-        chatBox.innerHTML += `<p class="text-blue-600 font-bold">Anda: ${message}</p>`;
-
-        fetch("/chat", {
-          method: "POST",
-          body: JSON.stringify({ message: message }),
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            chatBox.innerHTML += `<p class="text-gray-700 font-semibold">Bot: ${data.reply}</p>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-          });
-
-        input.value = "";
-      }
-
-      document
-        .getElementById("user-input")
-        .addEventListener("keypress", function (event) {
-          if (event.key === "Enter") sendMessage();
-        });
-    </script>
+    <!-- Tombol -->
+    <div class="flex gap-4">
+      <button
+        class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+      >
+        Proses
+      </button>
+      <button
+        class="bg-gray-300 text-black px-6 py-2 rounded hover:bg-gray-400"
+      >
+        Keluar
+      </button>
+    </div>
   </body>
 </html>
