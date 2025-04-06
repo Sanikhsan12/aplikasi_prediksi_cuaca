@@ -14,7 +14,6 @@ def proses():
     kelembaban = float(data['kelembaban'])
     tekanan = float(data['tekanan'])
 
-    # simpan ke variabel di main.py
     main.set_input_values(suhu, kelembaban, tekanan)
     hasil = main.main()
 
