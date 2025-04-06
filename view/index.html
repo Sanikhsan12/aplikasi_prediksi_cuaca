@@ -9,14 +9,31 @@
   <body
     class="bg-gradient-to-r from-sky-400 to-teal-600 flex flex-col items-center h-screen"
   >
-    <h1 class="text-2xl font-bold mb-8">PREDIKSI CUACA</h1>
+    <!-- ! Container Judul -->
+    <div
+      class="w-full max-w-3xl flex flex-row justify-center items-center gap-4"
+    >
+      <h1 class="text-2xl font-bold mb-8 mt-8">PREDIKSI CUACA</h1>
+      <picture>
+        <source
+          srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f32a/512.webp"
+          type="image/webp"
+        />
+        <img
+          src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f32a/512.gif"
+          alt="🌪️"
+          width="32"
+          height="32"
+        />
+      </picture>
+    </div>
 
-    <!-- Menu Input -->
+    <!-- ! Menu Input -->
     <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
-      <h2 class="text-lg font-semibold mb-4">Menu Input</h2>
+      <h2 class="text-lg font-semibold mb-4 text-center">Input User</h2>
       <div class="space-y-4">
         <div>
-          <label class="block font-medium">Suhu Udara</label>
+          <label class="block font-medium text-center">Suhu Udara</label>
           <input
             type="text"
             value="27.8"
@@ -24,7 +41,7 @@
           />
         </div>
         <div>
-          <label class="block font-medium">Kelembaban Udara</label>
+          <label class="block font-medium text-center">Kelembaban Udara</label>
           <input
             type="text"
             value="83"
@@ -32,7 +49,7 @@
           />
         </div>
         <div>
-          <label class="block font-medium">Tekanan Udara</label>
+          <label class="block font-medium text-center">Tekanan Udara</label>
           <input
             type="text"
             value="1009.9"
@@ -42,14 +59,14 @@
       </div>
     </section>
 
-    <!-- Output Container -->
+    <!-- ! Output Container -->
     <div class="w-full max-w-3xl flex flex-col md:flex-row gap-6 mb-6">
       <!-- Output Sugeno -->
       <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold mb-4">Menu Output Sugeno</h2>
+        <h2 class="text-lg font-semibold mb-4 text-center">Output Sugeno</h2>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block font-medium">Curah Hujan</label>
+            <label class="block font-medium text-center">Curah Hujan</label>
             <input
               type="text"
               value="2"
@@ -58,7 +75,7 @@
             />
           </div>
           <div>
-            <label class="block font-medium">Prediksi Cuaca</label>
+            <label class="block font-medium text-center">Prediksi Cuaca</label>
             <input
               type="text"
               value="Hujan Ringan"
@@ -69,12 +86,12 @@
         </div>
       </section>
 
-      <!-- Output Mamdani -->
-      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold mb-4">Menu Output Mamdani</h2>
+      <!-- ! Output Mamdani -->
+      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-8 mb-2">
+        <h2 class="text-lg font-semibold mb-4 text-center">Output Mamdani</h2>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block font-medium">Curah Hujan</label>
+            <label class="block font-medium text-center">Curah Hujan</label>
             <input
               type="text"
               value="7.90664"
@@ -83,7 +100,7 @@
             />
           </div>
           <div>
-            <label class="block font-medium">Prediksi Cuaca</label>
+            <label class="block font-medium text-center">Prediksi Cuaca</label>
             <input
               type="text"
               value="Hujan Ringan"
@@ -95,26 +112,21 @@
       </section>
     </div>
 
-    <!-- Menu Saran -->
+    <!-- ! Menu Saran -->
     <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
-      <h2 class="text-lg font-semibold mb-4">Menu Saran</h2>
+      <h2 class="text-lg font-semibold mb-4 text-center">Saran</h2>
       <p class="text-gray-700">
         Disarankan membawa payung jika hendak bepergian karena diprediksi hujan
         ringan.
       </p>
     </section>
 
-    <!-- Tombol -->
+    <!-- ! Tombol -->
     <div class="flex gap-4">
       <button
         class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
       >
         Proses
-      </button>
-      <button
-        class="bg-gray-300 text-black px-6 py-2 rounded hover:bg-gray-400"
-      >
-        Keluar
       </button>
     </div>
   </body>
