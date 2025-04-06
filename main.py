@@ -1,7 +1,15 @@
-# ! input user
-air_temperature = float(input("Masukkan suhu udara: "))
-humidity_value = float(input("Masukkan kelembapan: "))
-pressure_value = float(input("Masukkan tekanan: "))
+# ! variabel nilai input dari html
+
+air_temperature = None
+humidity_value = None
+pressure_value = None
+
+def set_input_values(suhu, kelembaban, tekanan):
+    global air_temperature, humidity_value, pressure_value
+    air_temperature = suhu
+    humidity_value = kelembaban
+    pressure_value = tekanan
+
 
 # ! domain value
 temperature = {
@@ -258,19 +266,21 @@ def defuzifikasi_sugeno(hasil_rule, rainfall_changes):
 
 def main():
     hasil_temperature, hasil_humidity, hasil_pressure = hasil_fuzifikasi()
-
-    # * Aplikasikan Rule Base
     hasil_rule = apply_rule_base(hasil_temperature, hasil_humidity, hasil_pressure)
-    print("Hasil Rule Base:", hasil_rule)
+    
+    crisp_value_mamdani, category_mamdani = defuzifikasi_mamdani(hasil_rule, rainfall_changes)
+    crisp_value_sugeno, category_sugeno = defuzifikasi_sugeno(hasil_rule, rainfall_changes)
 
-    # * Defuzifikasi Mamdani
-    crisp_value, best_category = defuzifikasi_mamdani(hasil_rule, rainfall_changes) # ambil hasil defuzifikasi
-    print("Centroid Value:", crisp_value)
-    print("Best Category (Mamdani):", best_category)
+    return {
+        "mamdani": {
+            "value": round(crisp_value_mamdani, 2),
+            "category": category_mamdani
+        },
+        "sugeno": {
+            "value": round(crisp_value_sugeno, 2),
+            "category": category_sugeno
+        }
+    }
 
-    # * Defuzifikasi Sugeno
-    crisp_value, best_category_sugeno = defuzifikasi_sugeno(hasil_rule, rainfall_changes) # ambil hasil defuzifikasi sugeno
-    print("Crisp Value:", crisp_value)
-    print("Best Category (Sugeno):", best_category_sugeno)
-
-main()
+if __name__ == "__main__":
+    main()
