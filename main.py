@@ -1,126 +1,276 @@
-# Rule / Pertanyaan 
-# * Kondisi Langit [ Cerah, Berawan, Mendung, Hujan Ringan, Hujan Lebat ]
-# ? Seberapa Kuat Angin Bertiup Di Sekitar Anda? [ Tenang, Sedang, Kencang, Sangat Kencang ]
-# ? Bagaimana Perkiraan Kelembapan Udara Di Sekitar Anda? [ Kering, Lembab, Sangat Lembab ]
-# ? pakah Ada Tanda-tanda Badai Di sekitar Anda? [ Ya, Tidak ]
-# ? pakah Ada perubahan Cuaca Yang Signifikan Dalam Beberapa Jam Terakhir? [ Ya, Tidak ]
+# ! input user
+air_temperature = float(input("Masukkan suhu udara: "))
+humidity_value = float(input("Masukkan kelembapan: "))
+pressure_value = float(input("Masukkan tekanan: "))
 
-# ! library
-from flask import Flask, render_template, request, jsonify
-import skfuzzy as fuzz
-import skfuzzy.control as ctrl
-import numpy as np
+# ! domain value
+temperature = {
+    "cold": [11, 16, 21],
+    "warm_1": [20, 23.5, 27],
+    "warm_2": [26, 27, 28],
+    "warm_3": [27, 29, 31],
+    "hot": [29, 34.5, 40]
+}
 
-app = Flask(__name__, template_folder='view', static_folder='static')
+humidity = {
+    "dry": [30, 35.5, 41],
+    "humid_1": [40, 55.5, 71],
+    "humid_2": [70, 75, 80],
+    "humid_3": [79, 84, 89],
+    "wet": [88, 94, 100]
+}
 
-def hitung_fuzzy(angin, kelembapan, badai, perubahan):
-    # * pengelompokan selain rule 
-    pengelompokan = {
-        (0, 0, 0, 1): "Cerah",
-        (0, 0, 1, 0): "Cerah",
-        (0, 0, 1, 1): "Cerah",
-        (0, 1, 0, 0): "Cerah",
-        (0, 1, 0, 1): "Cerah",
-        (0, 1, 1, 0): "Cerah",
-        (0, 1, 1, 1): "Cerah",
-        (1, 0, 0, 1): "Berawan",
-        (1, 0, 1, 0): "Berawan",
-        (1, 0, 1, 1): "Berawan",
-        (1, 1, 0, 1): "Mendung",
-        (1, 1, 1, 0): "Mendung",
-        (1, 1, 1, 1): "Mendung",
-    }
+pressure = {
+    "low": [980, 993.5, 1007],
+    "medium": [1006, 1006.5, 1007],
+    "high": [1008, 1011, 1014]
+}
 
-    # ? pengecekan Pengelompokan
-    if (angin, kelembapan, badai, perubahan) in pengelompokan:
-        return pengelompokan[(angin, kelembapan, badai, perubahan)]
+rainfall_changes = {
+    "no_rain": [0, 0.25, 0.5],
+    "light_rain": [0.5, 10.25, 20],
+    "moderate_rain": [20, 35, 50],
+    "heavy_rain": [50, 75, 100],
+    "very_heavy_rain": [100, 125, 150]
+}
+
+# ! Rule Base
+rule_base = [
+    # ! Rules untuk tidak hujan / sunn
+    {"temp": "hot", "humidity": "dry", "pressure": "high", "output": "no_rain"},
+    {"temp": "hot", "humidity": "dry", "pressure": "medium", "output": "no_rain"},
+    {"temp": "hot", "humidity": "humid_1", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_3", "humidity": "humid_1", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_3", "humidity": "humid_2", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_2", "humidity": "humid_2", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_1", "humidity": "dry", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_1", "humidity": "humid_1", "pressure": "high", "output": "no_rain"},
+    {"temp": "warm_1", "humidity": "humid_2", "pressure": "high", "output": "no_rain"},
     
-    # ! Variabel Fuzzy
-    langit = ctrl.Consequent(np.arange(0, 5, 1), 'langit')
-    angin_var = ctrl.Antecedent(np.arange(0, 4, 1), 'angin')
-    kelembapan_var = ctrl.Antecedent(np.arange(0, 3, 1), 'kelembapan')
-    badai_var = ctrl.Antecedent(np.arange(0, 2, 1), 'badai')
-    perubahan_var = ctrl.Antecedent(np.arange(0, 2, 1), 'perubahan')
-
-    # ! Keanggotaan
-    langit.automf(names=['Cerah', 'Berawan', 'Mendung', 'Hujan_Ringan', 'Hujan_Lebat'])
-    angin_var.automf(names=['Tenang', 'Sedang', 'Kencang', 'Sangat_Kencang']) # 4
-    kelembapan_var.automf(names=['Kering', 'Lembab', 'Sangat_Lembab']) # 3
-    badai_var.automf(names=['Tidak', 'Ya']) # 2
-    perubahan_var.automf(names=['Tidak', 'Ya']) # 2
-
-    # ! Aturan
-    aturan1 = ctrl.Rule(angin_var['Tenang'] & kelembapan_var['Kering'] & badai_var['Tidak'] & perubahan_var['Tidak'], langit['Cerah'])
-    aturan2 = ctrl.Rule(angin_var['Sedang'] & kelembapan_var['Kering'] & badai_var['Tidak'] & perubahan_var['Tidak'], langit['Berawan'])
-    aturan3 = ctrl.Rule(angin_var['Sedang'] & kelembapan_var['Lembab'] & badai_var['Tidak'] & perubahan_var['Tidak'], langit['Mendung'])
-    aturan4 = ctrl.Rule(angin_var['Kencang'] & kelembapan_var['Lembab'] & badai_var['Tidak'] & perubahan_var['Ya'], langit['Hujan_Ringan'])
-    aturan5 = ctrl.Rule(angin_var['Sangat_Kencang'] & kelembapan_var['Sangat_Lembab'] & badai_var['Ya'] & perubahan_var['Ya'], langit['Hujan_Lebat'])
-
-    sistem = ctrl.ControlSystem([aturan1, aturan2, aturan3, aturan4, aturan5])
-    kontrol = ctrl.ControlSystemSimulation(sistem)
+    # ! Rules untuk hujan ringan
+    {"temp": "warm_3", "humidity": "humid_2", "pressure": "medium", "output": "light_rain"},
+    {"temp": "warm_3", "humidity": "humid_2", "pressure": "low", "output": "light_rain"},
+    {"temp": "warm_2", "humidity": "humid_3", "pressure": "high", "output": "light_rain"},
+    {"temp": "warm_2", "humidity": "humid_2", "pressure": "low", "output": "light_rain"},
+    {"temp": "warm_2", "humidity": "humid_3", "pressure": "medium", "output": "light_rain"},
+    {"temp": "warm_1", "humidity": "humid_2", "pressure": "low", "output": "light_rain"},
+    {"temp": "warm_1", "humidity": "humid_3", "pressure": "high", "output": "light_rain"},
+    {"temp": "warm_1", "humidity": "humid_3", "pressure": "medium", "output": "light_rain"},
     
-    kontrol.input['angin'] = angin
-    kontrol.input['kelembapan'] = kelembapan
-    kontrol.input['badai'] = badai
-    kontrol.input['perubahan'] = perubahan
+    # ! Rules untuk hujan sedang
+    {"temp": "warm_2", "humidity": "wet", "pressure": "low", "output": "moderate_rain"},
+    {"temp": "warm_1", "humidity": "wet", "pressure": "low", "output": "moderate_rain"},
+    {"temp": "warm_1", "humidity": "wet", "pressure": "high", "output": "moderate_rain"},
+    {"temp": "cold", "humidity": "wet", "pressure": "low", "output": "moderate_rain"},
+    {"temp": "cold", "humidity": "wet", "pressure": "medium", "output": "moderate_rain"},
+    {"temp": "cold", "humidity": "humid_3", "pressure": "low", "output": "moderate_rain"},
     
-    kontrol.compute()
-    hasil = kontrol.output['langit']
+    # ! Rules unutuk hujan lebat
+    {"temp": "cold", "humidity": "wet", "pressure": "high", "output": "heavy_rain"},
+    {"temp": "cold", "humidity": "humid_3", "pressure": "high", "output": "heavy_rain"},
+    {"temp": "cold", "humidity": "humid_3", "pressure": "medium", "output": "heavy_rain"},
+    
+    # ! Rules untuk hujan sangat lebat
+    {"temp": "cold", "humidity": "humid_2", "pressure": "low", "output": "very_heavy_rain"},
+    {"temp": "cold", "humidity": "humid_1", "pressure": "low", "output": "very_heavy_rain"},
+    {"temp": "cold", "humidity": "dry", "pressure": "low", "output": "very_heavy_rain"},
+    {"temp": "cold", "humidity": "humid_1", "pressure": "medium", "output": "very_heavy_rain"}
+]
 
-    # ? Pemetaan hasil ke kategori cuaca
-    if hasil < 1:
-        hasil = "Cerah"
-    elif hasil < 2:
-        hasil = "Berawan"
-    elif hasil < 3:
-        hasil = "Mendung"
-    elif hasil < 4:
-        hasil = "Hujan Ringan"
+# * fungsi segitiga
+def triangular_membership(x, nilaiAwal, nilaiTengah, nilaiAkhir):
+    if x <= nilaiAwal or x >= nilaiAkhir:
+        return 0.0
+    elif x <= nilaiTengah:
+        return (x - nilaiAwal) /  (nilaiTengah  - nilaiAwal)
     else:
-        hasil = "Hujan Lebat"
+        return (nilaiAkhir - x) / (nilaiAkhir - nilaiTengah)
 
-    # * Saran Hasil prediksi
-    saran = {
-        "Cerah": "Disarankan untuk menggunakan krim sunblock karena kemungkinan cahaya matahari akan terik hari ini.",
-        "Berawan": "Cuaca cukup nyaman, tetapi tetap siapkan payung kecil jika diperlukan.",
-        "Mendung": "Disarankan membawa payung karena kemungkinan hujan ringan.",
-        "Hujan Ringan": "Gunakan jas hujan atau payung untuk berjaga-jaga.",
-        "Hujan Lebat": "Hindari bepergian jika tidak mendesak dan pastikan perlengkapan hujan tersedia.",
-    }
-
-    return hasil, saran.get(hasil, "Tidak ada saran untuk cuaca ini.")
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/chat', methods=['POST'])
-def chat():
-    try:
-        data = request.json['message'].strip().lower()
-        responses = {
-            "halo": "<br/>Halo! Masukkan parameter cuaca dalam format: angin (0-3), kelembapan (0-2), badai (0-1), perubahan (0-1).",
-        }
+# ? fuzzy set temperature
+def fuzifikasi_temprature(value, jangkauan):
+    keanggotaan = {}
+    
+    for key, (nilaiAwal, nilaiTengah, nilaiAkhir) in jangkauan.items():
+        anggota = triangular_membership(value, nilaiAwal, nilaiTengah, nilaiAkhir)
+        if anggota > 0:
+            keanggotaan[key] = anggota
+    
+    if keanggotaan:
+        total = sum(keanggotaan.values())
+        normalized_values = {key: val/total for key, val in keanggotaan.items()}
         
-        if data in responses:
-            return jsonify({"reply": responses[data]})
-        elif "prediksi" in data:
-            return jsonify({"reply": "Masukkan parameter cuaca dalam format: angin (0-3), kelembapan (0-2), badai (0-1), perubahan (0-1)."})
-        else:
-            params = list(map(int, data.split())) 
-            if len(params) == 4:
-                angin, kelembapan, badai, perubahan = params
-                if 0 <= angin <= 3 and 0 <= kelembapan <= 2 and 0 <= badai <= 1 and 0 <= perubahan <= 1:
-                    hasil, saran = hitung_fuzzy(angin, kelembapan, badai, perubahan)
-                    return jsonify({"reply": f"Prediksi cuaca dalam beberapa jam kedepan akan {hasil}. {saran}"})
-                else:
-                    return jsonify({"reply": "Format salah! Gunakan angka sesuai rentang yang ditentukan."})
+        hasil = {key : round(val, 2) for key, val in normalized_values.items()}
+        return hasil
+    else:
+        return ["No membership found"], {}
+    
+# ? fuzzy set humidity
+def fuzifikasi_kelembapan(value, jangkauan):
+    keanggotaan = {}
+    
+    for key, (nilaiAwal, nilaiTengah, nilaiAkhir) in jangkauan.items():
+        anggota = triangular_membership(value, nilaiAwal, nilaiTengah, nilaiAkhir)
+        if anggota > 0:
+            keanggotaan[key] = anggota
+    
+    if keanggotaan:
+        total = sum(keanggotaan.values())
+        normalized_values = {key: val/total for key, val in keanggotaan.items()}
+        
+        hasil = {key : round(val, 2) for key, val in normalized_values.items()}
+        return hasil
+    else:
+        return ["No membership found"], {}
+    
+# ? fuzzy set pressure
+def fuzifikasi_tekanan(value, jangkauan):
+    keanggotaan = {}
+    
+    for key, (nilaiAwal, nilaiTengah, nilaiAkhir) in jangkauan.items():
+        anggota = triangular_membership(value, nilaiAwal, nilaiTengah, nilaiAkhir)
+        if anggota > 0:
+            keanggotaan[key] = anggota
+    
+    if keanggotaan:
+        total = sum(keanggotaan.values())
+        normalized_values = {key: val/total for key, val in keanggotaan.items()}
+        
+        hasil = {key : round(val, 2) for key, val in normalized_values.items()}
+        return hasil
+    else:
+        return ["No membership found"], {}
+    
+def hasil_fuzifikasi():
+    # ! hasil normalisasi
+    hasil_termprature = fuzifikasi_temprature(air_temperature, temperature)
+    hasil_humidity = fuzifikasi_kelembapan(humidity_value, humidity)
+    hasil_pressure = fuzifikasi_tekanan(pressure_value, pressure)
+
+    print("Hasil Fuzifikasi:")
+    print("Suhu Udara:", hasil_termprature)
+    print("Kelembapan:", hasil_humidity)
+    print("Tekanan Udara:", hasil_pressure)
+    
+    return hasil_termprature, hasil_humidity, hasil_pressure
+
+def apply_rule_base(hasil_termprature, hasil_humidity, hasil_pressure):
+    hasil_rule = {}
+    
+    print("\nRule Matching Details:")
+    
+    for rule in rule_base:
+        temp = rule["temp"]
+        humidity = rule["humidity"]
+        pressure = rule["pressure"]
+        output = rule["output"]
+        
+        temp_val = hasil_termprature.get(temp, 0)
+        hum_val = hasil_humidity.get(humidity, 0)
+        press_val = hasil_pressure.get(pressure, 0)
+        
+        print(f"Rule: {temp}/{humidity}/{pressure} -> {output}")
+        print(f"  Values: temp={temp_val}, humidity={hum_val}, pressure={press_val}")
+        
+        if temp in hasil_termprature and humidity in hasil_humidity and pressure in hasil_pressure:
+            min_value = min(hasil_termprature[temp], hasil_humidity[humidity], hasil_pressure[pressure])
+            print(f"  Match! Min value: {min_value}")
+            
+            if output not in hasil_rule:
+                hasil_rule[output] = min_value
             else:
-                return jsonify({"reply": "Input tidak lengkap. Silakan masukkan 4 angka sesuai format."})
-    except Exception as e:
-        return jsonify({"reply": f"Terjadi kesalahan: {str(e)}"})
+                hasil_rule[output] = max(hasil_rule[output], min_value)
+        else:
+            print("  No match")
+    
+    return hasil_rule
 
+# ? Clasifikasi
+def clasifikasi(value, rainfall_changes):
+    highest_value = 0
+    best_catergory = "no category"
 
+    for key, (nilaiAwal, nilaiTengah, nilaiAkhir) in rainfall_changes.items():
+        membership = triangular_membership(value, nilaiAwal, nilaiTengah, nilaiAkhir)
+        if membership > highest_value:
+            highest_value = membership
+            best_catergory = key
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    return best_catergory
+
+# ? defuzifikasi
+def defuzifikasi_mamdani(hasil_rule, rainfall_changes):
+    if not hasil_rule:
+        return 0.0, "No Rules Matched"
+    
+    sample_point = []
+    step = 0.15
+    nilaiAwal = 0
+    while nilaiAwal <= 150:
+        sample_point.append(nilaiAwal)
+        nilaiAwal += step
+
+    membership_values = [0] * len(sample_point)
+
+    for index, value in hasil_rule.items():
+        if index in rainfall_changes:
+            nilaiAwal, nilaiTengah, nilaiAkhir = rainfall_changes[index]
+            for i, x in enumerate(sample_point):
+                membership_values[i] = max(membership_values[i], triangular_membership(x, nilaiAwal, nilaiTengah, nilaiAkhir))
+
+    # ? defuzifikasi centroid
+    numerator = 0.0
+    denominator = 0.0
+    for i, x in enumerate(sample_point):
+        numerator += x * membership_values[i]
+        denominator += membership_values[i]
+
+    if denominator == 0:
+        return 0.0, "No Membership Found"
+    
+    crisp_value = numerator / denominator
+    best_category = clasifikasi(crisp_value, rainfall_changes)
+    return crisp_value, best_category
+    
+
+def defuzifikasi_sugeno(hasil_rule, rainfall_changes):
+    if not hasil_rule:
+        return 0.0, "No Rules Matched"
+    
+    representative_values = {}
+    for key, (nilaiAwal, nilaiTengah, nilaiAkhir) in rainfall_changes.items():
+        representative_values[key] = nilaiTengah
+
+    numerator = 0.0
+    denominator = 0.0
+
+    for key, value in hasil_rule.items():
+        z_value = representative_values[key]
+
+        numerator += z_value * value
+        denominator += value
+
+    if denominator == 0:
+        return 0.0, "No Membership Found"
+    
+    crisp_value = numerator / denominator
+    best_category = clasifikasi(crisp_value, rainfall_changes)
+    return crisp_value, best_category
+
+def main():
+    hasil_temperature, hasil_humidity, hasil_pressure = hasil_fuzifikasi()
+
+    # * Aplikasikan Rule Base
+    hasil_rule = apply_rule_base(hasil_temperature, hasil_humidity, hasil_pressure)
+    print("Hasil Rule Base:", hasil_rule)
+
+    # * Defuzifikasi Mamdani
+    crisp_value, best_category = defuzifikasi_mamdani(hasil_rule, rainfall_changes) # ambil hasil defuzifikasi
+    print("Centroid Value:", crisp_value)
+    print("Best Category (Mamdani):", best_category)
+
+    # * Defuzifikasi Sugeno
+    crisp_value, best_category_sugeno = defuzifikasi_sugeno(hasil_rule, rainfall_changes) # ambil hasil defuzifikasi sugeno
+    print("Crisp Value:", crisp_value)
+    print("Best Category (Sugeno):", best_category_sugeno)
+
+main()
