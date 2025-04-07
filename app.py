@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import main  # pastikan file main.py dan app.py ada di folder sama
 
-app = Flask(__name__,template_folder='view')
+app = Flask(__name__,template_folder='view',static_folder='static')
 
 @app.route('/')
 def index():
