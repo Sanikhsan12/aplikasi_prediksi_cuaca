@@ -37,25 +37,19 @@
           <input
             id="suhu"
             type="text"
-            value="27.8"
             class="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>
         <div>
           <label class="block font-medium text-center">Kelembaban Udara</label>
-          <input
-            id="kelembaban"
-            type="text"
-            value="83"
-            class="w-full border border-gray-300 rounded px-3 py-2"
-          />
+          <input id="kelembaban" type="text"" class="w-full border
+          border-gray-300 rounded px-3 py-2" />
         </div>
         <div>
           <label class="block font-medium text-center">Tekanan Udara</label>
           <input
             id="tekanan"
             type="text"
-            value="1009.9"
             class="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>
@@ -72,7 +66,6 @@
             <label class="block font-medium text-center">Curah Hujan</label>
             <input
               type="text"
-              value="2"
               class="w-full border border-gray-300 rounded px-3 py-2"
               readonly
             />
@@ -81,7 +74,6 @@
             <label class="block font-medium text-center">Prediksi Cuaca</label>
             <input
               type="text"
-              value="Hujan Ringan"
               class="w-full border border-gray-300 rounded px-3 py-2"
               readonly
             />
@@ -97,7 +89,6 @@
             <label class="block font-medium text-center">Curah Hujan</label>
             <input
               type="text"
-              value="7.90664"
               class="w-full border border-gray-300 rounded px-3 py-2"
               readonly
             />
@@ -106,7 +97,6 @@
             <label class="block font-medium text-center">Prediksi Cuaca</label>
             <input
               type="text"
-              value="Hujan Ringan"
               class="w-full border border-gray-300 rounded px-3 py-2"
               readonly
             />
@@ -132,16 +122,16 @@
         Proses
       </button>
     </div>
-    
+
     <!-- ! Backend -->
     <script>
       const prosesBtn = document.querySelector("button");
-    
+
       prosesBtn.addEventListener("click", async () => {
         const suhu = document.getElementById("suhu").value;
         const kelembaban = document.getElementById("kelembaban").value;
         const tekanan = document.getElementById("tekanan").value;
-    
+
         const response = await fetch("/proses", {
           method: "POST",
           headers: {
@@ -149,31 +139,44 @@
           },
           body: JSON.stringify({ suhu, kelembaban, tekanan }),
         });
-    
+
         const result = await response.json();
-    
+
         if (result.status === "success") {
           // Ambil elemen input output hasil
-          const curahHujanSugeno = document.querySelectorAll("section")[1].querySelectorAll("input")[0];
-          const prediksiSugeno = document.querySelectorAll("section")[1].querySelectorAll("input")[1];
-          const curahHujanMamdani = document.querySelectorAll("section")[2].querySelectorAll("input")[0];
-          const prediksiMamdani = document.querySelectorAll("section")[2].querySelectorAll("input")[1];
-          const saranParagraf = document.querySelector("section:nth-of-type(4) p");
-    
+          const curahHujanSugeno = document
+            .querySelectorAll("section")[1]
+            .querySelectorAll("input")[0];
+          const prediksiSugeno = document
+            .querySelectorAll("section")[1]
+            .querySelectorAll("input")[1];
+          const curahHujanMamdani = document
+            .querySelectorAll("section")[2]
+            .querySelectorAll("input")[0];
+          const prediksiMamdani = document
+            .querySelectorAll("section")[2]
+            .querySelectorAll("input")[1];
+          const saranParagraf = document.querySelector(
+            "section:nth-of-type(4) p"
+          );
+
           // Update nilainya
           curahHujanSugeno.value = result.hasil.sugeno.value;
           prediksiSugeno.value = result.hasil.sugeno.category;
           curahHujanMamdani.value = result.hasil.mamdani.value;
           prediksiMamdani.value = result.hasil.mamdani.category;
-    
+
           // Saran dinamis
           let saran = "Cuaca cerah. Nikmati harimu!";
-          if (result.hasil.sugeno.category.toLowerCase().includes("hujan") ||
-              result.hasil.mamdani.category.toLowerCase().includes("hujan")) {
-            saran = "Disarankan membawa payung jika hendak bepergian karena diprediksi hujan.";
+          if (
+            result.hasil.sugeno.category.toLowerCase().includes("hujan") ||
+            result.hasil.mamdani.category.toLowerCase().includes("hujan")
+          ) {
+            saran =
+              "Disarankan membawa payung jika hendak bepergian karena diprediksi hujan.";
           }
           saranParagraf.textContent = saran;
-    
+
           // Optional: alert success
           alert(result.message);
         } else {
@@ -181,6 +184,5 @@
         }
       });
     </script>
-    
   </body>
 </html>
