@@ -4,7 +4,7 @@
 
 ## Fitur
 
-- Prediksi Berbasis Chatbot
+- Prediksi Cuaca Dengan Metode Fuzzy Logic Dan Rule Based System
 
 ## Tech
 
