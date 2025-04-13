@@ -1,4 +1,4 @@
-![Image](https://github.com/user-attachments/assets/b92d113d-85cf-4017-a43e-293ad8f0c048)
+![Image](https://github.com/user-attachments/assets/d8b8caa1-1131-4a5b-89b6-07d2d0f8b96d)
 
 # Aplikasi Sistem Pakar Bertema Prediksi Cuaca
 
