@@ -28,35 +28,64 @@
       </picture>
     </div>
 
-    <!-- ! Menu Input -->
-    <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6 mb-6">
-      <h2 class="text-lg font-semibold mb-4 text-center">
-        Silahkan masukan variabel input
-      </h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block font-medium text-center">Suhu Udara</label>
-          <input
-            id="suhu"
-            type="text"
-            class="w-full border border-gray-300 rounded px-3 py-2"
-          />
+    <!-- ! Container Form -->
+    <div class="w-full max-w-3xl flex flex-col md:flex-row gap-6 mb-6">
+      <!-- ! Menu Input -->
+      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-lg font-semibold mb-4 text-center">
+          Silahkan masukan variabel input
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block font-medium text-center">Suhu Udara</label>
+            <input
+              id="suhu"
+              type="text"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <label class="block font-medium text-center"
+              >Kelembaban Udara</label
+            >
+            <input
+              id="kelembaban"
+              type="text"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <label class="block font-medium text-center">Tekanan Udara</label>
+            <input
+              id="tekanan"
+              type="text"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
         </div>
-        <div>
-          <label class="block font-medium text-center">Kelembaban Udara</label>
-          <input id="kelembaban" type="text"" class="w-full border
-          border-gray-300 rounded px-3 py-2" />
-        </div>
-        <div>
-          <label class="block font-medium text-center">Tekanan Udara</label>
-          <input
-            id="tekanan"
-            type="text"
-            class="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- ! Menu Informasi Rentang -->
+      <section class="w-full max-w-md bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-lg font-semibold mb-4 text-center">
+          Informasi Rentang
+        </h2>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li>
+            <strong>Suhu Udara:</strong> Dingin (11-21), Hangat (20-31), Panas
+            (29-40)
+          </li>
+          <li>
+            <strong>Kelembaban Udara:</strong> Kering (30-41), Lembap (40-89),
+            Basah (88-100)
+          </li>
+          <li>
+            <strong>Tekanan Udara:</strong> Rendah (980-1007), Sedang
+            (1006-1007), Tinggi (1008-1014)
+          </li>
+        </ul>
+      </section>
+    </div>
 
     <!-- ! Output Container -->
     <div class="w-full max-w-3xl flex flex-col md:flex-row gap-6 mb-6">
